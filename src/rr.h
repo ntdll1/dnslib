@@ -366,7 +366,13 @@ class RDataA: public RData {
         virtual eRDataType getType() { return RDATA_A; };
 
         void setAddress(const uchar *addr) { for (uint i = 0; i < 4; i++) mAddr[i] = addr[i]; };
-        void setAddress(const std::string &addr) { inet_pton(AF_INET, addr.c_str(), &mAddr); };
+        void setAddress(const std::string &addr) {
+            struct sockaddr_in saddr = { 0 };
+            int len = sizeof(saddr);
+            if (WSAStringToAddressA((LPSTR)addr.c_str(), AF_INET, NULL, (LPSOCKADDR)&saddr, &len) == 0) {
+                *(struct in_addr*)&mAddr = saddr.sin_addr;
+            }
+        };
         uchar* getAddress() { return mAddr; };
 
         virtual void decode(Buffer &buffer, const uint size);
