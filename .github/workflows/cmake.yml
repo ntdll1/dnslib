@@ -20,7 +20,7 @@ jobs:
         cmake --build build-Win32 --target dnslib --config Release
         cmake --build build-x64 --target dnslib --config Debug
         cmake --build build-x64 --target dnslib --config Release
-        cmake -e rename src include 
+        cmake -E rename src include 
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
