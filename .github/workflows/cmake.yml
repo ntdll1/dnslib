@@ -25,10 +25,8 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
       with:
-        name: lib
+        name: dnslib-windows-static
         path: |
-          build-Win32/Debug
-          build-Win32/Release
-          build-x64/Debug
-          build-x64/Release
+          build-*/*/*.lib
+          build-*/*/*.pdb
           include/*.h
