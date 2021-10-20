@@ -11,8 +11,8 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake src -A Win32 -D CMAKE_CXX_FLAGS_RELEASE=/MT -D CMAKE_CONFIGURATION_TYPES=Debug;Release -B build-Win32
-        cmake src -A x64 -D CMAKE_CXX_FLAGS_RELEASE=/MT -D CMAKE_CONFIGURATION_TYPES=Debug;Release -B build-x64
+        cmake src -A Win32 -D CMAKE_CXX_FLAGS_RELEASE=/MT -D CMAKE_CONFIGURATION_TYPES="Debug;Release" -B build-Win32
+        cmake src -A x64 -D CMAKE_CXX_FLAGS_RELEASE=/MT -D CMAKE_CONFIGURATION_TYPES="Debug;Release" -B build-x64
 
     - name: Build
       run: |
@@ -20,6 +20,7 @@ jobs:
         cmake --build build-Win32 --target dnslib --config Release
         cmake --build build-x64 --target dnslib --config Debug
         cmake --build build-x64 --target dnslib --config Release
+        cmake -e rename src include 
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
@@ -30,3 +31,4 @@ jobs:
           build-Win32/Release
           build-x64/Debug
           build-x64/Release
+          include/*.h
