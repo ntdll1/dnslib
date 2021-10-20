@@ -11,22 +11,40 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake src -A Win32 -D CMAKE_CXX_FLAGS_RELEASE=/MT -D CMAKE_CONFIGURATION_TYPES="Debug;Release" -B build-Win32
-        cmake src -A x64 -D CMAKE_CXX_FLAGS_RELEASE=/MT -D CMAKE_CONFIGURATION_TYPES="Debug;Release" -B build-x64
+        cmake src -A Win32 -D CMAKE_BUILD_TYPE=Debug -B build-Win32-MDd
+        cmake src -A Win32 -D CMAKE_BUILD_TYPE=Release -B build-Win32-MD
+        cmake src -A x64 -D CMAKE_BUILD_TYPE=Debug -B build-x64-MDd
+        cmake src -A x64 -D CMAKE_BUILD_TYPE=Release -B build-x64-MD
+        cmake src -A Win32 -D CMAKE_CXX_FLAGS_DEBUG=/MTd -D CMAKE_BUILD_TYPE=Debug -B build-Win32-MTd
+        cmake src -A Win32 -D CMAKE_CXX_FLAGS_RELEASE=/MT -D CMAKE_BUILD_TYPE=Release -B build-Win32-MT
+        cmake src -A x64 -D CMAKE_CXX_FLAGS_DEBUG=/MTd -D CMAKE_BUILD_TYPE=Debug -B build-x64-MTd
+        cmake src -A x64 -D CMAKE_CXX_FLAGS_RELEASE=/MT -D CMAKE_BUILD_TYPE=Release -B build-x64-MT
 
     - name: Build
       run: |
-        cmake --build build-Win32 --target dnslib --config Debug
-        cmake --build build-Win32 --target dnslib --config Release
-        cmake --build build-x64 --target dnslib --config Debug
-        cmake --build build-x64 --target dnslib --config Release
-        cmake -E rename src include 
+        cmake --build build-Win32-MDd --target dnslib
+        cmake --build build-Win32-MD --target dnslib
+        cmake --build build-x64-MDd --target dnslib
+        cmake --build build-x64-MD --target dnslib
+        cmake --build build-Win32-MTd --target dnslib
+        cmake --build build-Win32-MT --target dnslib
+        cmake --build build-x64-MTd --target dnslib
+        cmake --build build-x64-MT --target dnslib
+        cmake -E make_directory lib
+        cmake -E rename build-Win32-MDd/Debug/dnslib.lib lib/dnslib-Win32-MDd.lib
+        cmake -E rename build-Win32-MD/Release/dnslib.lib lib/dnslib-Win32-MD.lib
+        cmake -E rename build-x64-MDd/Debug/dnslib.lib lib/dnslib-x64-MDd.lib
+        cmake -E rename build-x64-MD/Release/dnslib.lib lib/dnslib-x64-MD.lib
+        cmake -E rename build-Win32-MTd/Debug/dnslib.lib lib/dnslib-Win32-MTd.lib
+        cmake -E rename build-Win32-MT/Release/dnslib.lib lib/dnslib-Win32-MT.lib
+        cmake -E rename build-x64-MTd/Debug/dnslib.lib lib/dnslib-x64-MTd.lib
+        cmake -E rename build-x64-MT/Release/dnslib.lib lib/dnslib-x64-MT.lib
+        cmake -E rename src include
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
       with:
         name: dnslib-windows-static
         path: |
-          build-*/*/*.lib
-          build-*/*/*.pdb
+          lib
           include/*.h
